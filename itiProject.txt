@@ -1,0 +1,644 @@
+#region start
+	#region git
+		git init
+		git add .
+		git commit -m "Initial commit"
+		git remote add origin url--
+		git push -u origin master
+
+		git branch feature1
+		git checkout -b feature1
+		git push -u origin feature1
+
+		git checkout main
+		git merge feature1
+		git push origin main
+	#endregion
+
+	#region flowbite init
+		ng new my-app --no-standalone
+		npm install tailwindcss --save-dev
+		npx tailwindcss init
+
+		@tailwind base;
+		@tailwind components;
+		@tailwind utilities;
+
+		npm install flowbite
+
+		/** @type {import('tailwindcss').Config} */
+		module.exports = {
+		  content: [
+		    "./src/**/*.{html,ts}",
+		    "./node_modules/flowbite/**/*.js" // add this line
+		  ],
+		  theme: {
+		    extend: {},
+		  },
+		  plugins: [
+		    require('flowbite/plugin')
+		  ],
+		}
+
+		import { Component } from '@angular/core';
+		import { OnInit } from '@angular/core';
+		import { initFlowbite } from 'flowbite';
+
+		@Component({
+		  selector: 'app-root',
+		  templateUrl: './app.component.html',
+		  styleUrls: ['./app.component.css']
+		})
+		export class AppComponent implements OnInit {
+		  title = 'web-app';
+
+		  ngOnInit(): void {
+		    initFlowbite();
+		  }
+		}
+	#endregion
+
+	#region icons
+		npm i @ng-icons/core
+		npm i @ng-icons/bootstrap-icons @ng-icons/css.gg
+	    NgIconsModule.withIcons({ bootstrapCart4, bootstrapTrash3, bootstrapInfoCircleFill,bootstrapList,cssAdd}),
+        <button
+            class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+            (click)="buy(prd.price,itemCount.value)">
+            <ng-icon name="bootstrapCart4"></ng-icon>
+        </button>
+        <button
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mx-3">
+            <ng-icon name="bootstrapInfoCircleFill"></ng-icon>
+        </button>
+        <button
+            class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+            <ng-icon name="bootstrapTrash3"></ng-icon>
+        </button>
+	#endregion
+
+	#region structure
+		components
+		ng g c home 
+		ng g c productList
+		ng g c cart
+		ng g c order
+
+		shared
+		ng g c header
+		ng g c footer
+		ng g c sidebar
+
+		view
+		ng g class data
+
+		models
+		ng g i iproduct
+
+		directive
+		ng g directive lightbox
+
+		pipe
+		ng g pipe usdToEgp
+
+		services
+		ng g s product
+	#endregion
+#endregion
+
+#region product cart
+	#region class static binding
+		ng g class data
+		export class CartData {
+		    constructor(
+		        public name:string,
+		        public imgUrl:string,
+		        public description:string,
+		        public rating:number,
+		        public price:number,
+		        public branches:string[]){
+		    }
+		}
+	  	cartDataDetail!:CartData
+			https: any;
+		  	constructor(){
+		    this.cartDataDetail=new CartData('pq','https://picsum.photos/2000/1100','d1',4,1000,['cairo','alex'])
+		  	}
+
+      	<a href="#">
+        <img class="rounded-t-lg" [src]="cartDataDetail.imgUrl" alt="product image" />
+    	</a>
+	#endregion
+#endregion
+
+#region productlist
+  prdList!:IProducts[]
+  catList!:ICategory[]
+  totalPrice!:number
+  selectedCatId:number=0
+  dateNow!:Date
+  constructor(){
+    this.prdList=[
+      {id:1,name:'p1',price:100,quantity:1,imgUrl:'https://picsum.photos/2000/1100',categoryId:1},
+      {id:2,name:'p2',price:110,quantity:2,imgUrl:'https://picsum.photos/2000/1200',categoryId:2},
+      {id:3,name:'p3',price:120,quantity:0,imgUrl:'https://picsum.photos/2000/1300',categoryId:3},
+      {id:4,name:'p4',price:130,quantity:4,imgUrl:'https://picsum.photos/2000/1400',categoryId:4},
+      {id:5,name:'p5',price:140,quantity:5,imgUrl:'https://picsum.photos/2000/1500',categoryId:5},
+      {id:6,name:'p6',price:150,quantity:6,imgUrl:'https://picsum.photos/2000/1600',categoryId:6},
+    ]
+    this.catList=[
+      {id:1,name:'c1'},
+      {id:2,name:'c2'},
+      {id:3,name:'c3'},
+      {id:4,name:'c4'},
+    ]
+    this.dateNow=new Date()
+  }
+  buy(prdPrice:number,count:any){
+     this.totalPrice=+count*prdPrice
+  }
+	#region html
+		<td class="px-6 py-4">
+			<div class="flex items-center">
+				<div>
+					<input type="number" id="first_product"
+						class="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						placeholder="0" [(ngModel)]="itemCount.value"  #itemCount required>
+				</div>
+
+			</div>
+		</td>
+
+		<td class="px-6 py-4 text-center">
+			<div *ngIf="prd.quantity!=0;else elseBlock" #itemCount>
+				{{prd.quantity}}
+			</div>
+			<ng-template #elseBlock>
+				hidden
+			</ng-template>
+		</td>
+	#endregion
+  #region cat
+	  <select name="cat" id="cat"
+	    class=" grid justify-center my-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+		    <option *ngFor="let cat of catList" [value]="cat.id" #cat [(ngModel)]="selectedCatId">
+		        {{cat.name}}
+		    </option>
+		</select>
+  #endregion
+#endregion
+
+#region directives 
+	@Directive({
+	  selector: '[appLightbox]'
+	})
+	export class LightboxDirective {
+	  @Input() defaultColor:string='blue'
+	  @Input() hoverColor:string='green'
+	  constructor(private elRef: ElementRef) {
+	    this.elRef.nativeElement.style.border=`2px solid ${this.defaultColor}`
+	  }
+	  @HostListener('mouseover') onMouseOver(){
+	    this.elRef.nativeElement.style.border=`2px solid ${this.hoverColor}`
+	  }
+		  @HostListener('mouseout') onMouseOut(){
+		    this.elRef.nativeElement.style.border=`2px solid ${this.defaultColor}`
+		  }
+	}
+
+    <td class="p-4">
+        <img appLightbox [src]="prd.imgUrl" class="w-16 md:w-32 max-w-full max-h-full rounded-xl" alt="Apple Watch">
+    </td>
+#endregion
+
+#region pipes
+	@Pipe({
+	  name: 'usdToEgp'
+	})
+	export class UsdToEgpPipe implements PipeTransform {
+
+	  transform(value: number): number {
+	    return value*55;
+	  }
+
+	}
+
+    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+        {{prd.price |usdToEgp |currency :'EGP':'symbol'}}
+    </td>
+    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+        {{totalPrice |usdToEgp |currency :'EGP':'symbol'}}
+    </td>
+#endregion 
+
+#region life cycle
+	constructor
+	ngOnChanges
+	ngOnInit
+	ngDoCheck
+		ngAfterContentInit
+		ngAfterContentChecked
+			
+		ngAfterViewInit
+		ngAfterViewChecked
+	ngOnDestroy
+#endregion
+
+#region interaction
+	#region without input output
+		import { FormsModule } from '@angular/forms';
+		<select name="cat" id="cat"
+			class=" grid justify-center my-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+			(change)="filterByCat()" [(ngModel)]="selectedCatId" >
+			<option *ngFor="let cat of catList" [value]="cat.id" #cat >
+				{{cat.name}}
+			</option>
+		</select>
+		<div>
+			<span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">date : {{dateNow | date:'longDate'}}</span>
+		</div>
+
+		<ng-container *ngFor="let prd of prdListOfCat; let i=index">
+
+		catList!: ICategory[]
+		totalPrice!: number
+		selectedCatId!: number
+		filterByCat() {
+			this.prdListOfCat = this.prdList.filter(prd => prd.categoryId == this.selectedCatId) //value of catList.id
+		}
+	#endregion
+
+	#region with input output
+		#region input parent master child list
+			((((((((((((((1))))))))))))))
+			#region Parent
+				selectedCatId: number=0;
+				catList!: ICategory[];
+				sentCatId!: number;
+
+				constructor() { 
+					this.catList = [
+					{ id: 100, name: 'c1' },
+					{ id: 200, name: 'c2' },
+					{ id: 300, name: 'c3' },
+					{ id: 400, name: 'c4' },
+					]
+				}
+				<select name="cat" id="cat"
+					class=" grid justify-center my-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					[(ngModel)]="selectedCatId">  //selectedCatId =>fill html parent
+					
+					<option *ngFor="let cat of catList" [value]="cat.id" #cat>
+						{{cat.name}}
+					</option>
+				</select>
+			#endregion
+
+			((((((((((((((2 child))))))))))))))
+			selectedCatId: number=0;
+			@Input() sentCatId!:number // send catId Empty in child
+			#endregion
+				ngOnChanges(): void {
+						this.filterByCat()
+					}
+					private filterByCat() {
+						this.prdListOfCat = this.prdList.filter(prd => prd.categoryId == this.sentCatId)
+					}
+			#endregion
+			((((((((((((((3)))))))))))))) html child inside parent html
+			<app-product-list [sentCatId]="selectedCatId"/>
+
+		#region filter with input
+
+		#region output
+			//((((((((((((((total price is child of productlist))))))))))))))
+			  @Output() totalPriceChanged!:EventEmitter<number> 
+  				totalPrice:number=0
+			constructor(){this.totalPriceChanged = new EventEmitter<number>()}
+
+			buy(prdPrice: number, count: any) {
+				this.totalPrice += +count * prdPrice
+				this.totalPriceChanged.emit(this.totalPrice)
+			}
+			#region html
+				<div>
+					<input type="number" id="first_product"
+						class="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						placeholder="0" [(ngModel)]="Count.value" #Count required>
+				</div>
+				<button
+				class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+				(click)="buy(i.price,Count.value)">
+					<ng-icon name="bootstrapCart4"></ng-icon>
+				</button>
+			#endregion
+			//((((((((((((((((((productlist of parent category))))))))))))))))))
+			selectedCatId:number=0
+			receiveOrderTotalPrice!:number
+
+			
+			onTotalPriceChange(totalPrice: number) {
+				this.receiveOrderTotalPrice=totalPrice
+			}
+			<app-product-list [sentCatId]="selectedCatId" (totalPriceChanged)="onTotalPriceChange($event)"/>
+		#endregion
+	#endregion
+	#region viewChild //wanna work
+		@ViewChild(ProductListComponent) productListObj!:ProductListComponent
+		clg =>parent
+	#endregion
+#endregion
+
+#region services
+	#region crud
+		prdList!: IProducts[]
+		constructor() {
+			this.prdList = [
+			{ id: 1, name: 'p1', price: 100, quantity: 1, imgUrl: 'https://picsum.photos/2000/1100', categoryId: 1 },
+			{ id: 2, name: 'p2', price: 110, quantity: 2, imgUrl: 'https://picsum.photos/2000/1200', categoryId: 2 },
+			{ id: 3, name: 'p3', price: 120, quantity: 0, imgUrl: 'https://picsum.photos/2000/1300', categoryId: 3 },
+			{ id: 4, name: 'p4', price: 130, quantity: 4, imgUrl: 'https://picsum.photos/2000/1400', categoryId: 4 },
+			{ id: 5, name: 'p5', price: 140, quantity: 5, imgUrl: 'https://picsum.photos/2000/1500', categoryId: 1 },
+			{ id: 6, name: 'p6', price: 150, quantity: 6, imgUrl: 'https://picsum.photos/2000/1600', categoryId: 1 },
+			]
+		}
+		getAll(): IProducts[] {
+			return this.prdList
+		}
+		getAllByCatId(catId: number): IProducts[] {
+			if (catId == 0)
+			return this.prdList
+			else
+			return this.prdList.filter(prd => prd.categoryId == catId)
+		}
+		getById(id: number): IProducts | null {
+
+			let foundPrd = this.prdList.find(prd => prd.id == id)
+			return foundPrd ? foundPrd : null
+		}
+		add(prd:IProducts){
+			this.prdList.push(prd)
+		}
+	#endregion
+	
+	#region afterCrud
+
+		// prdList!: IProducts[] // sent to service
+		prdListOfCat: IProducts[] = []
+		catList!: ICategory[]
+		totalPrice: number = 0
+		@Input() sentCatId!: number
+		dateNow!: Date
+		@Output() totalPriceChanged!: EventEmitter<number>
+		constructor(private productService: StaticProductsService,private router:Router) {
+			// this.prdList = [
+			//   { id: 1, name: 'p1', price: 100, quantity: 1, imgUrl: 'https://picsum.photos/2000/1100', categoryId: 1 },
+			//   { id: 2, name: 'p2', price: 110, quantity: 2, imgUrl: 'https://picsum.photos/2000/1200', categoryId: 2 },
+			//   { id: 3, name: 'p3', price: 120, quantity: 0, imgUrl: 'https://picsum.photos/2000/1300', categoryId: 3 },
+			//   { id: 4, name: 'p4', price: 130, quantity: 4, imgUrl: 'https://picsum.photos/2000/1400', categoryId: 4 },
+			//   { id: 5, name: 'p5', price: 140, quantity: 5, imgUrl: 'https://picsum.photos/2000/1500', categoryId: 1 },
+			//   { id: 6, name: 'p6', price: 150, quantity: 6, imgUrl: 'https://picsum.photos/2000/1600', categoryId: 1 },
+			// ]
+			this.dateNow = new Date()
+			this.totalPriceChanged = new EventEmitter<number>()
+		}
+		ngOnChanges(): void {
+			// this.filterByCat()
+			this.prdListOfCat = this.productService.getAllByCatId(this.sentCatId)
+		}
+		ngOnInit(): void {
+			// this.prdListOfCat=this.prdList
+			this.prdListOfCat = this.productService.getAll()
+		}
+		buy(prdPrice: number, count: any) {
+			this.totalPrice += +count * prdPrice
+			this.totalPriceChanged.emit(this.totalPrice)
+		}
+		showDetails(pid: number) {
+			this.router.navigate(['/products',pid])
+		}
+		// private filterByCat() {
+		//   // this.prdListOfCat = this.prdList.filter(prd => prd.categoryId == this.sentCatId)
+		// }
+	#endregion
+#endregion
+
+#region routing
+	[routerLink]="['']" [routerLinkActive]="['text-green-500']"
+	[routerLinkActiveOptions]="{exact:true}"
+
+	const routes: Routes = [
+		{path:'',component:MainLayoutComponent,children:[
+			{path:'',redirectTo:'/home',pathMatch:'full'},
+			{path:'home',component:HomeComponent},
+			{path:'products',component:ProductListComponent},
+			{path:'products/:pid',component:ProductDetailsComponent},
+			{path:'order',component:OrderMasterComponent},
+		]},
+		{path:'login',component:LoginComponent},
+		{path:'register',component:RegisterComponent},
+		{path:'**',component:NotFoundError}
+	];
+	#region activatedRoute
+		{path:'products/:pid',component:ProductDetailsComponent},
+		import { Location } from '@angular/common'
+
+		currPrdId!: number
+		prd!: IProducts | null
+		prdIdsList: number[] = []
+		constructor(
+			private activateRoute: ActivatedRoute
+			, private prdService: StaticProductsService
+			, private router: Router
+			, private location: Location) { }
+
+		goBack() {
+			this.location.back()
+			this.prd = this.prdService.getById(this.currPrdId)
+		}
+		#region buttons
+			<div class="flex justify-center my-3">
+				<!-- Previous Button -->
+				<button class="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+					(click)="goPrev()" [disabled]="currPrdId==prdIdsList[0]">
+					Previous
+				</button>
+				<a class="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white mx-3"
+					(click)="goBack()">
+					go back
+				</a>
+
+				<!-- Next Button -->
+				<button  class="flex items-center justify-center px-3 h-8  text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+					(click)="goNext()" [disabled]="currPrdId==prdIdsList[prdIdsList.length-1]">
+					Next
+				</button>
+			</div>
+		#endregion
+
+		#region onInit
+			ngOnInit(): void {
+				this.currPrdId = Number(this.activateRoute.snapshot.paramMap.get('pid'))
+				// this.prd=this.prdService.getById(this.currPrdId)
+				this.prdIdsList = this.prdService.getPrdIds()
+				this.prd = this.prdService.getById(this.currPrdId)
+				this.activateRoute.paramMap.subscribe(x => this.currPrdId = Number(x.get('pid')))
+			}
+		#endregion
+
+		#region go
+			goPrev() {
+				let currentIndex = this.prdIdsList.findIndex(x => x == this.currPrdId)
+				let prevIndex
+				if (currentIndex > 0) {
+					prevIndex = this.prdIdsList[currentIndex - 1]
+					this.router.navigate(['/products', prevIndex])
+					this.prd = this.prdService.getById(this.currPrdId)
+				}
+			}
+			goNext() {
+				let currentIndex = this.prdIdsList.findIndex(x => x == this.currPrdId)
+				let nextIndex
+				if (currentIndex < this.prdIdsList.length) {
+				nextIndex = this.prdIdsList[currentIndex + 1]
+				this.router.navigate(['/products', nextIndex])
+				this.prd = this.prdService.getById(this.currPrdId)
+				}
+			}
+		#endregion
+	#endregion
+#endregion
+
+#region rxjs
+	#region ad-services
+		private adsList!: string[]
+		constructor() {
+			this.adsList = [
+			"big discounts",
+			"sale up to 50%",
+			"friday offers",
+			"",
+			"special Offer"
+			]
+		}
+		getAds(adsInSec: number): Observable<string> {
+			return new Observable<string>(x => {
+			// x.next();x.error();x.complete()
+			let counter = 0
+			let adsTimer = setInterval(() => {
+				if (counter == this.adsList.length - 1) {
+				x.complete()
+				}
+				else if (this.adsList[counter] = '') {
+				x.error('empty ads')
+				}
+				else {
+				x.next(this.adsList[counter])
+				counter++
+				}
+			}, adsInSec * 1000)
+			})
+		}
+	#endregion
+
+	#region service inject
+		private Subscription!:Subscription
+		constructor(private ads:AdsService){}
+
+		ngOnInit(): void {
+				this.Subscription=this.ads.getAds(3).subscribe(
+				{
+					next:x=>console.log(x),
+					error:err=>console.log(err),
+					complete:()=>{console.log('complete')}
+				}
+				)
+			}
+			ngOnDestroy(): void {
+				this.Subscription.unsubscribe()
+			}
+	#endregion
+#endregion
+
+#region operators
+	https://reactivex.io/documentation/operators.html
+
+	#region service
+	    getSerialAds():Observable<string>{
+			return from(this.adsList) // from database list
+			// return of("a","b","c") // of this objects
+		}
+	#endregion
+
+	#region home
+		ngOnInit(): void {
+			// let sub=this.ads.getAds(3).subscribe(
+			//   {
+			//     next:x=>console.log(x),
+			//     error:err=>console.log(err),
+			//     complete:()=>{console.log('complete')}
+			//   }
+			// )
+			// this.Subscription.push(sub)
+			// let sub =this.ads.getSerialAds().subscribe(x=>{
+			//   console.log(x)
+			// })
+			// this.Subscription.push(sub)
+			//pipe return observable could make subscribe after finish
+			// let filterAds=this.ads.getAds(3).pipe(
+			//   filter(x=>x.includes("friday")),
+			//   map(x=>"ad:--"+x)
+			// )
+			// let subFilter=filterAds.subscribe(
+			//   {
+			//     next:x=>console.log(x),
+			//     error:err=>console.log(err),
+			//     complete:()=>{console.log('complete')}
+			//   }
+			// )
+			// this.Subscription.push(subFilter)
+			let filterObs=this.ads.getAds(3).pipe(
+			retry(3),
+			catchError((err, caught) => caught),
+			take(30)
+			)
+			let adsShow=filterObs.subscribe(
+					{
+						next:x=>console.log(x),
+						error:err=>console.log(err),
+						complete:()=>{console.log('complete')}
+					}
+			)
+			this.Subscription.push(adsShow)
+		}
+		getSerialAds():Observable<string>{
+			return from(this.adsList)
+			// return of("a","b","c")
+		}
+	#endregion
+#endregion
+
+#region subject (observable,observer)
+	#region subject types
+		publish subject =>default
+		replay =>start from first subscriber
+		behavior =>start from the the last observable next to that observable
+	#endregion
+
+	#region services
+	  login(username:string,password:string){
+			let token='1234'
+			localStorage.setItem('token',token)
+
+		}
+		logout(){
+			localStorage.removeItem('token')
+		}
+		get isUserLogged():boolean{
+			if(localStorage.getItem('token')){
+			return true
+			}
+			return false
+		}
+	#endregion
+#endregion
