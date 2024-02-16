@@ -1,5 +1,5 @@
 {
-  "name": "shop-iti",
+  "name": "shop",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -14,13 +14,14 @@
     "@angular/common": "^16.2.0",
     "@angular/compiler": "^16.2.0",
     "@angular/core": "^16.2.0",
-    "@angular/forms": "^16.2.12",
+    "@angular/forms": "^16.2.0",
     "@angular/platform-browser": "^16.2.0",
     "@angular/platform-browser-dynamic": "^16.2.0",
     "@angular/router": "^16.2.0",
-    "@ng-icons/bootstrap-icons": "^26.4.0",
-    "@ng-icons/core": "^26.4.0",
-    "@ng-icons/css.gg": "^26.4.0",
+    "@ng-icons/bootstrap-icons": "^26.3.0",
+    "@ng-icons/core": "^26.3.0",
+    "@ng-icons/css.gg": "^26.3.0",
+    "@ng-icons/font-awesome": "^26.3.0",
     "flowbite": "^2.2.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
@@ -37,7 +38,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^3.4.0",
     "typescript": "~5.1.3"
   }
 }
