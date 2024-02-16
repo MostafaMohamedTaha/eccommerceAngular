@@ -507,6 +507,15 @@
 			}
 		#endregion
 	#endregion
+	#region html mainLayoutPage
+		<router-outlet />
+	#endregion
+	#region app-component
+		<app-header/>
+		<app-sidebar class="flex justify-center"/>
+		<router-outlet />
+		<app-footer/>
+	#endregion
 #endregion
 
 #region rxjs

@@ -9,15 +9,15 @@ import { ICategory } from 'src/app/model/icategory';
 export class CategoryComponent {
   selectedCatId: number=0;
   catList!: ICategory[];
-  sentCatId!: number;
+  sentCatId: number=0;
   totalPriceRecieve!:number
   // @Output() totalPriceChange!:EventEmitter<number>
   constructor() { 
     this.catList = [
-      { id: 100, name: 'c1' },
-      { id: 200, name: 'c2' },
-      { id: 300, name: 'c3' },
-      { id: 400, name: 'c4' },
+      { id: 1, name: 'c1' },
+      { id: 2, name: 'c2' },
+      { id: 3, name: 'c3' },
+      { id: 4, name: 'c4' },
     ]
     
   }

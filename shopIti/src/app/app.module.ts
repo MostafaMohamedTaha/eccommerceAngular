@@ -15,6 +15,10 @@ import { LightBoxDirective } from './directive/light-box.directive';
 import { DolarToEgyPipe } from './pipe/dolar-to-egy.pipe';
 import { FormsModule } from '@angular/forms';
 import { CategoryComponent } from './components/mainLayout/prd/product-list/category/category.component';
+import { MainLayoutComponent } from './components/mainLayout/main-layout/main-layout.component';
+import { LoginComponent } from './auth/login/login.component';
+import { RegisterComponent } from './auth/register/register.component';
+import { ProductDetailsComponent } from './components/mainLayout/prd/product-list/product-details/product-details.component';
 
 
 
@@ -30,7 +34,11 @@ import { CategoryComponent } from './components/mainLayout/prd/product-list/cate
     ProductListComponent,
     LightBoxDirective,
     DolarToEgyPipe,
-    CategoryComponent
+    CategoryComponent,
+    MainLayoutComponent,
+    LoginComponent,
+    RegisterComponent,
+    ProductDetailsComponent
     
 
   ],

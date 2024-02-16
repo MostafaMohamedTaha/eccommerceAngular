@@ -1,6 +1,8 @@
 import { AfterContentInit, AfterViewInit, Component, DoCheck, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Router } from '@angular/router';
 import { ICategory } from 'src/app/model/icategory';
 import { StaticProduct } from 'src/app/model/static-product';
+import { ProductsService } from 'src/app/services/products.service';
 
 @Component({
   selector: 'app-product-list',
@@ -34,7 +36,7 @@ export class ProductListComponent { //implements OnInit,OnChanges
   //     this.dateNow = new Date()
   //   }
   // //#endregion
-  
+
   // //#region life cycle
 
   //   // ngOnDestroy(): void {
@@ -53,13 +55,13 @@ export class ProductListComponent { //implements OnInit,OnChanges
   //   //   this.prdListOfCat=this.prdList
   //   // }
   //   //#endregion
-  
+
   // //#region filter
 
   //   ngOnInit(): void {
   //     this.prdListOfCat=this.prdList
   //   }
-    
+
   //   ngOnChanges(): void {
   //     this.filterByCat()
   //   }
@@ -72,7 +74,7 @@ export class ProductListComponent { //implements OnInit,OnChanges
   //     }
   //   }
   // //#endregion
-  
+
   // //#region buy
 
   //   buy(prdPrice: number, count: any) {
@@ -112,5 +114,31 @@ export class ProductListComponent { //implements OnInit,OnChanges
   //   this.prdList.push(prd)
   // }
   // //#endregion
+
+
+  // prdList!: IProducts[] // sent to service
+  prdListOfCat: StaticProduct[] = []
+  catList!: ICategory[]
+  totalPrice: number = 0
+  dateNow!: Date
+  @Input() sentCatId: number = 0
+  @Output() totalPriceChanged!: EventEmitter<number>
+  constructor(private productService: ProductsService, private router: Router) {
+    this.dateNow = new Date()
+    this.totalPriceChanged = new EventEmitter<number>()
+  }
+  ngOnChanges(): void {
+    this.prdListOfCat = this.productService.getAllByCatId(this.sentCatId)
+  }
+  ngOnInit(): void {
+    this.prdListOfCat = this.productService.getAll()
+  }
+  buy(prdPrice: number, count: any) {
+    this.totalPrice += +count * prdPrice
+    this.totalPriceChanged.emit(this.totalPrice)
+  }
+  showDetails(pid: number) {
+    this.router.navigate(['/products', pid])
+  }
 
 }
