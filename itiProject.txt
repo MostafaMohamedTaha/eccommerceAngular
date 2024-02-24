@@ -487,6 +487,9 @@
 		#endregion
 
 		#region go
+			  	getPrdIds(): number[] {
+					return this.prdList.map(x=>x.id)
+				}
 			goPrev() {
 				let currentIndex = this.prdIdsList.findIndex(x => x == this.currPrdId)
 				let prevIndex
@@ -519,6 +522,9 @@
 #endregion
 
 #region rxjs
+	#region add service
+		ng g s ad
+	#endregion
 	#region ad-services
 		private adsList!: string[]
 		constructor() {
@@ -535,10 +541,10 @@
 			// x.next();x.error();x.complete()
 			let counter = 0
 			let adsTimer = setInterval(() => {
-				if (counter == this.adsList.length - 1) {
+				if (counter == this.adsList.length) {
 				x.complete()
 				}
-				else if (this.adsList[counter] = '') {
+				else if (this.adsList[counter] == '') {
 				x.error('empty ads')
 				}
 				else {
@@ -556,11 +562,11 @@
 
 		ngOnInit(): void {
 				this.Subscription=this.ads.getAds(3).subscribe(
-				{
-					next:x=>console.log(x),
-					error:err=>console.log(err),
-					complete:()=>{console.log('complete')}
-				}
+					{
+						next:x=>console.log(x),
+						error:err=>console.log(err),
+						complete:()=>{console.log('complete')}
+					}
 				)
 			}
 			ngOnDestroy(): void {
@@ -650,4 +656,181 @@
 			return false
 		}
 	#endregion
+
+	#region login ts
+		private isLoggedSub!:BehaviorSubject<boolean>
+		
+		constructor() { 
+			this.isLoggedSub=new BehaviorSubject<boolean>(false)
+		}
+		
+		login(username:string,password:string){
+			let token='1234'
+			localStorage.setItem('token',token)
+			this.isLoggedSub.next(true)
+
+		}
+		logout(){
+			localStorage.removeItem('token')
+			this.isLoggedSub.next(false)
+		}
+		get isUserLogged():boolean{
+			return localStorage.getItem('token')?true:false
+		}
+		isLoggedSubject():Observable<boolean>{
+			return this.isLoggedSub
+		}
+	#endregion
+
+	#region login html
+		<li [hidden]="!isLogged"> 
+			<div [routerLink]="['/login']" [routerLinkActive]="['text-green-500']" [hidden]="!isLogged"
+				class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">login</div>
+		</li>
+		<li [hidden]="isLogged">
+			<div [routerLink]="['/logout']" [routerLinkActive]="['text-green-500']" [hidden]="isLogged"
+				class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700 focus:border-2" >logout</div>
+		</li>
+	#endregion
 #endregion
+
+#region guard
+	ng g g auth --functional=false
+
+	{path:'products/:pid',component:ProductDetailsComponent,canActivate:[AuthGuard]},
+
+	#region message 
+		export class AuthGuard implements CanActivate {
+		constructor(private auth: AuthService, private router: Router) { }
+			canActivate(
+				route: ActivatedRouteSnapshot,
+				state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+				if (this.auth.isUserLogged) {
+				return true
+				} else {
+				alert("not logged")
+				this.router.navigate(['/login'])
+				return false
+				}
+			}
+
+		}
+	#endregion
+#endregion
+
+#region httpClient 
+	#region ngModel
+		import {  HttpClientModule } from '@angular/common/http';
+		HttpClientModule
+	#endregion
+
+	#region install
+	npm i -g json-server
+	npm i json-server
+	json-server --watch db.json
+	#region db.json make it like this
+		{
+			"products": [
+				{
+					"id": 1,
+					"name": "p1",
+					"price": 100,
+					"quantity": 1,
+					"imgUrl": "https://picsum.photos/2000/1100",
+					"categoryId": 1
+				},
+				{
+					"id": 2,
+					"name": "p2",
+					"price": 110,
+					"quantity": 2,
+					"imgUrl": "https://picsum.photos/2000/1200",
+					"categoryId": 2
+				},
+				{
+					"id": 3,
+					"name": "p3",
+					"price": 120,
+					"quantity": 0,
+					"imgUrl": "https://picsum.photos/2000/1300",
+					"categoryId": 3
+				},
+				{
+					"id": 4,
+					"name": "p4",
+					"price": 130,
+					"quantity": 4,
+					"imgUrl": "https://picsum.photos/2000/1400",
+					"categoryId": 4
+				},
+				{
+					"id": 5,
+					"name": "p5",
+					"price": 140,
+					"quantity": 5,
+					"imgUrl": "https://picsum.photos/2000/1500",
+					"categoryId": 1
+				},
+				{
+					"id": 6,
+					"name": "p6",
+					"price": 150,
+					"quantity": 6,
+					"imgUrl": "https://picsum.photos/2000/1600",
+					"categoryId": 1
+				}
+			],
+			"category":[
+				{"id":1,"name":"c1"},
+				{"id":2,"name":"c2"},
+				{"id":3,"name":"c3"},
+				{"id":4,"name":"c4"}
+			]
+		}
+	#endregion make environments
+		ng g environments
+		#region crud
+			constructor(private http: HttpClient) { }
+			get(): Observable<StaticProduct[]> {
+				return this.http.get<StaticProduct[]>(`${environment.apiLink}/products`)
+			}
+			getCat(): Observable<ICategory[]> {
+				return this.http.get<ICategory[]>(`${environment.apiLink}/category`)
+			}
+			getByCat(catId:number): Observable<StaticProduct[]> {
+				return this.http.get<StaticProduct[]>(`${environment.apiLink}/products?categoryId=${catId}`)
+			}
+			getById(id:number): Observable<StaticProduct> {
+				return this.http.get<StaticProduct>(`${environment.apiLink}/products/${id}`)
+			}
+			// add(newPrd:StaticProduct): Observable<StaticProduct> {
+			//   return this.http.post<StaticProduct>(`${environment.apiLink}/products`)
+			// }
+			// edit(Prd:StaticProduct): Observable<StaticProduct> {
+			//   return this.http.put<StaticProduct>(`${environment.apiLink}/products`)
+			// }
+			delete(): Observable<StaticProduct> {
+				return this.http.delete<StaticProduct>(`${environment.apiLink}/products`)
+			}
+		#endregion
+
+		#region ts prdList
+			constructor(
+				private prd:PrdService,
+				// private productService: ProductsService, 
+				private router: Router) {
+				this.dateNow = new Date()
+				this.totalPriceChanged = new EventEmitter<number>()
+			}
+			ngOnChanges(): void {
+				// this.prdListOfCat = this.productService.getAllByCatId(+this.sentCatId)
+				this.prd.getByCat(+this.sentCatId).subscribe(x=>this.prdListOfCat=x)
+			}
+			ngOnInit(): void {
+				this.prd.get().subscribe(x=>this.prdListOfCat=x)
+			}
+		#endregion
+	#endregion	
+#endregion
+
+

@@ -1,7 +1,7 @@
-import { AfterContentInit, AfterViewInit, Component, DoCheck, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { ICategory } from 'src/app/model/icategory';
 import { StaticProduct } from 'src/app/model/static-product';
+import { PrdService } from 'src/app/services/prd.service';
 import { ProductsService } from 'src/app/services/products.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { ProductsService } from 'src/app/services/products.service';
   styleUrls: ['./product-list.component.css']
 })
 //,DoCheck,AfterContentInit,AfterViewInit,OnDestroy
-export class ProductListComponent { //implements OnInit,OnChanges
+export class ProductListComponent implements OnInit, OnChanges { //implements OnInit,OnChanges
   // //#region params
   //   prdList!: StaticProduct[]
   //   selectedCatId: number=0;
@@ -118,20 +118,23 @@ export class ProductListComponent { //implements OnInit,OnChanges
 
   // prdList!: IProducts[] // sent to service
   prdListOfCat: StaticProduct[] = []
-  catList!: ICategory[]
   totalPrice: number = 0
   dateNow!: Date
-  @Input() sentCatId: number = 0
+  @Input() sentCatId!: number
   @Output() totalPriceChanged!: EventEmitter<number>
-  constructor(private productService: ProductsService, private router: Router) {
+  constructor(
+    private prd:PrdService,
+    // private productService: ProductsService, 
+    private router: Router) {
     this.dateNow = new Date()
     this.totalPriceChanged = new EventEmitter<number>()
   }
   ngOnChanges(): void {
-    this.prdListOfCat = this.productService.getAllByCatId(this.sentCatId)
+    // this.prdListOfCat = this.productService.getAllByCatId(+this.sentCatId)
+    this.prd.getByCat(+this.sentCatId).subscribe(x=>this.prdListOfCat=x)
   }
   ngOnInit(): void {
-    this.prdListOfCat = this.productService.getAll()
+    this.prd.get().subscribe(x=>this.prdListOfCat=x)
   }
   buy(prdPrice: number, count: any) {
     this.totalPrice += +count * prdPrice

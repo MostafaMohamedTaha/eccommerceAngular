@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../../../.."
+		}
+	],
+	"settings": {
+		"hide-files.files": [
+			"shopIti/src/app/model",
+			"shopIti/src/app/light-box.directive.ts",
+			"shopIti/src/app/light-box.directive.spec.ts"
+		]
+	}
+}

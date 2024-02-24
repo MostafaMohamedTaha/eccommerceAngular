@@ -8,6 +8,8 @@ import { MainLayoutComponent } from './components/mainLayout/main-layout/main-la
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ProductDetailsComponent } from './components/mainLayout/prd/product-list/product-details/product-details.component';
+import { AuthGuard } from './gaurds/auth.guard';
+
 
 const routes: Routes = [
   {path:'',component:MainLayoutComponent,children:[
@@ -16,9 +18,10 @@ const routes: Routes = [
     {path:'products',component:ProductListComponent},
     {path:'category',component:CategoryComponent},
     {path:'details',component:ProductDetailsComponent},
-    // {path:'products/:pid',component:ProductDetailsComponent},
+    {path:'products/:pid',component:ProductDetailsComponent,canActivate:[AuthGuard]},
   ]},
   {path:'login',component:LoginComponent},
+  {path:'logout',component:LoginComponent},
   {path:'register',component:RegisterComponent},
   {path:'**',component:NotFoundError}
 ];
