@@ -12,13 +12,15 @@ import { cssAdd } from '@ng-icons/css.gg';
 import { ProductListComponent } from './components/mainLayout/prd/product-list/product-list.component';
 import { LightBoxDirective } from './directive/light-box.directive';
 import { DolarToEgyPipe } from './pipe/dolar-to-egy.pipe';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CategoryComponent } from './components/mainLayout/prd/product-list/category/category.component';
 import { MainLayoutComponent } from './components/mainLayout/main-layout/main-layout.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ProductDetailsComponent } from './components/mainLayout/prd/product-list/product-details/product-details.component';
 import {  HttpClientModule } from '@angular/common/http';
+import { AddProductComponent } from './components/mainLayout/prd/product-list/add-product/add-product.component';
+import { ionAddSharp } from '@ng-icons/ionicons';
 
 
 
@@ -38,16 +40,17 @@ import {  HttpClientModule } from '@angular/common/http';
     MainLayoutComponent,
     LoginComponent,
     RegisterComponent,
-    ProductDetailsComponent
-    
+    ProductDetailsComponent,
+    AddProductComponent
 
   ],
   imports: [
     BrowserModule,
-    NgIconsModule.withIcons({ bootstrapCart4, bootstrapTrash3, bootstrapInfoCircleFill,bootstrapList,cssAdd}),
+    NgIconsModule.withIcons({ bootstrapCart4, bootstrapTrash3, bootstrapInfoCircleFill,bootstrapList,cssAdd,ionAddSharp}),
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

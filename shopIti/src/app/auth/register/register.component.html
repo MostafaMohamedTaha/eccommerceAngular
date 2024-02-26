@@ -1,30 +1,102 @@
+<form class="max-w-sm mx-auto" [formGroup]="register" (ngSubmit)="submit()">
+    <div class="mb-5">
+        <label for="fullName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Full Name</label>
+        <input type="text" id="fullName" name="fullName" formControlName="fullName" [class.is-valid]="fullName?.valid"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Please Enter Your Full Name" required />
+        <div [hidden]="fullName?.valid || fullName?.untouched">
+            <div class="flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800" >
 
-<div class="grid justify-center m-3">
-    <div class="md:w-[600px] w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
-        <form class="space-y-6" action="">
-            <h5 class="text-xl font-medium text-gray-900 dark:text-white">Sign up</h5>
-            <div>
-                <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="name@company.com" required />
-            </div>
-            <div>
-                <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label>
-                <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
-            </div>
-            <!-- <div class="flex items-start">
-                <div class="flex items-start">
-                    <div class="flex items-center h-5">
-                        <input id="remember" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required />
-                    </div>
-                    <label for="remember" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
+                <div class="ms-3 text-sm font-medium" *ngIf="fullName?.errors?.['required']">
+                    Please Fill This Input
                 </div>
-                <a href="#" class="ms-auto text-sm text-blue-700 hover:underline dark:text-blue-500">Lost Password?</a>
-            </div> -->
-            <button type="submit" class="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">register to your account</button>
-            <!-- <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-                Not registered? <a href="#" class="text-blue-700 hover:underline dark:text-blue-500">Create account</a>
-            </div> -->
-        </form>
+                <div class="ms-3 text-sm font-medium" *ngIf="fullName?.errors?.['pattern'] ">
+                    Please Fill This Input at least 3 letters {{fullName?.errors?.['pattern'].actualValue }} not matching
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-5">
+        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+        <input type="email" id="email" name="email" formControlName="email"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Please Enter Your Email" required />
+    </div>
+
+    <div class="mb-5" formGroupName="address">
+        <div>
+            <label for="city" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>
+            <input type="text" id="city" name="city" formControlName="city"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Please Enter Your city" required />
+        </div>
+        <div>
+            <label for="postalCode" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Postal
+                Code</label>
+            <input type="text" id="postalCode" name="postalCode" formControlName="postalCode"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Please Enter Your Postal Code" required />
+        </div>
+        <div>
+            <label for="street" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Street</label>
+            <input type="text" id="street" name="street" formControlName="street"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Please Enter Your Street" required />
+        </div>
+    </div>
+    <div formArrayName="phoneNumber">
+        <div class="mb-5" *ngFor="let phoneNumber of phoneNumbers.controls;let i=index">
+            <label for="phoneNumber" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone
+                Number</label>
+            <input type="number" id="phoneNumber" name="phoneNumber" [formControlName]="i"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Please Enter Your Phone Number" required />
+        </div>
+    </div>
+
+    <div class="mb-5">
+        <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+        <input type="password" id="password" name="password" formControlName="password"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Please Enter Your Password" required />
+    </div>
+
+    <div class="mb-5">
+        <label for="confirmPassword" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm
+            Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" formControlName="confirmPassword"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Please Enter Your Password" required />
+    </div>
+
+    <div class="flex items-start mb-5">
+        <div class="flex items-center h-5">
+            <input id="remember" type="checkbox" value=""
+                class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+                required />
+        </div>
+        <label for="remember" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
+    </div>
+
+    <button (click)="fillForm()"
+        class="mx-2 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+        auto fill form
+    </button>
+    <button type="submit" [disabled]="register.invalid"
+        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        Submit
+    </button>
+</form>
+
+<div class="grid justify-center text-violet-500">
+    <div class="flex">
+
+        {{register.value | json}} |
+    </div>
+    <div class="grid text-red-500">
+
+        <!-- {{register.get('fullName')?.errors | json}} -->
+        the error is {{fullName?.errors | json}}
     </div>
 </div>
-

@@ -22,6 +22,7 @@
     "@ng-icons/core": "^26.5.0",
     "@ng-icons/css.gg": "^26.3.0",
     "@ng-icons/font-awesome": "^26.3.0",
+    "@ng-icons/ionicons": "^27.1.0",
     "flowbite": "^2.2.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

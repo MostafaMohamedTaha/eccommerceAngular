@@ -9,6 +9,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ProductDetailsComponent } from './components/mainLayout/prd/product-list/product-details/product-details.component';
 import { AuthGuard } from './gaurds/auth.guard';
+import { AddProductComponent } from './components/mainLayout/prd/product-list/add-product/add-product.component';
 
 
 const routes: Routes = [
@@ -18,6 +19,7 @@ const routes: Routes = [
     {path:'products',component:ProductListComponent},
     {path:'category',component:CategoryComponent},
     {path:'details',component:ProductDetailsComponent},
+    {path:'products/add',component:AddProductComponent},
     {path:'products/:pid',component:ProductDetailsComponent,canActivate:[AuthGuard]},
   ]},
   {path:'login',component:LoginComponent},

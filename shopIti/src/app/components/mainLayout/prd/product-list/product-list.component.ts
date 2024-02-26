@@ -5,9 +5,9 @@ import { PrdService } from 'src/app/services/prd.service';
 import { ProductsService } from 'src/app/services/products.service';
 
 @Component({
-  selector: 'app-product-list',
-  templateUrl: './product-list.component.html',
-  styleUrls: ['./product-list.component.css']
+    selector: 'app-product-list',
+    templateUrl: './product-list.component.html',
+    styleUrls: ['./product-list.component.css']
 })
 //,DoCheck,AfterContentInit,AfterViewInit,OnDestroy
 export class ProductListComponent implements OnInit, OnChanges { //implements OnInit,OnChanges
@@ -143,5 +143,7 @@ export class ProductListComponent implements OnInit, OnChanges { //implements On
   showDetails(pid: number) {
     this.router.navigate(['/products', pid])
   }
-
+  deleteProduct(id1:number){
+    this.prd.delete(id1).subscribe(x=>x.id=id1)
+  }
 }
