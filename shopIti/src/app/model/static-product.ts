@@ -6,3 +6,9 @@ export interface StaticProduct {
     imgUrl:string,
     categoryId:number
 }
+
+
+
+
+
+

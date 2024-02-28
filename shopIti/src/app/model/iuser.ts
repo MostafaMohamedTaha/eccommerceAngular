@@ -8,4 +8,6 @@ export interface IUser {
         street:string
     }
     password:string
+    referral:string[]
+    referralOther:string[]
 }

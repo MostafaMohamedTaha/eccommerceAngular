@@ -1110,6 +1110,650 @@
 				auto fill form
 			</button>
 		#endregion
+
+		#region submit 
+			submit() {
+				let registerUser: IUser = this.register.value as IUser
+				console.log(registerUser)
+			}
+			<form class="grid grid-cols-4" [formGroup]="register" (ngSubmit)="submit()">
+		#endregion
+
+		#region add multi numbers
+			get phoneNumbers() {
+				return this.register.get('phoneNumber') as FormArray
+			}
+			addNumber(event: any) {
+				this.phoneNumbers.controls.push(this.registerService.control(''));
+				event.target?.classList.add('hidden')
+			}
+
+			<div formArrayName="phoneNumber" class="mb-5" *ngFor="let phoneNumber of phoneNumbers.controls;let i=index">
+				<label for="{{'phoneNumber'+i+1}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+					phone number # {{i+1}}
+				</label>
+
+				<input type="number" id="{{'phoneNumber'+i+1}}" name="{{'phoneNumbers'+i}}" [formControlName]="i"
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					placeholder="Please Enter Your Phone Number" required />
+
+				<button (click)="addNumber($event)"
+					class="my-2 text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800">
+					+
+				</button>
+			</div>
+		#endregion
+
+		#region model after referral
+			export interface IUser {
+				fullName:string
+				email:string
+				phoneNumber:string[]
+				address:{
+					city:string
+					postalCode:string
+					street:string
+				}
+				password:string
+				referral:string[]
+				referralOther:string[]
+			}
+		#endregion
+
+		#region validator after referral
+			this.register = registerService.group(
+				{
+				fullName: ['', [Validators.required, Validators.pattern('[A-Za-z]{3,}')]],
+				email: ['', [Validators.required]],
+				phoneNumber: registerService.array(['']),
+				address: registerService.group({
+					city: [''],
+					postalCode: [''],
+					street: [''],
+				}),
+				password: [''],
+				confirmPassword: [''],
+				referral:[''],
+				referralOther:[
+					'',
+					[Validators.required, Validators.pattern('[A-Za-z]{3,}')] 
+				],
+				}
+			)
+		#endregion
+
+		#region referral radio html
+			<div class="flex justify-center my-3">
+				<div class="flex items-center me-4" >
+					<input id="referral1" type="radio" value="socialMedia" name="referral" formControlName="referral"
+						class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" (change)="updateReferralValidator"> 
+					<label for="red-radio" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Social Media</label>
+				</div>
+				<div class="flex items-center me-4" >
+					<input id="referral2" type="radio" value="friend" name="referral" formControlName="referral"
+						class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" (change)="updateReferralValidator">
+					<label for="green-radio" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Friend</label>
+				</div>
+				<div class="flex items-center me-4" >
+					<input checked id="referral3" type="radio" value="referralOther" name="referral" formControlName="referral"
+						class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" (change)="updateReferralValidator">
+					<label for="purple-radio"
+						class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">referralOther</label>
+				</div>
+			</div>
+			<div class="mb-5" *ngIf="referral?.value=='referralOther'">
+				<label for="referralOther" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">referralOther</label>
+				<input type="text" id="referralOther" name="referralOther" formControlName="referralOther"
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					placeholder="Please Enter Your Email" required />
+			</div>
+		#endregion
+
+		#region referral ts
+			get referral() {
+				return this.register.get('referral') 
+			}
+			get updateReferralValidator() {
+			if(this.referral?.value=='referralOther'){
+				this.register.get('referralOther')?.addValidators( [Validators.required, Validators.pattern('[A-Za-z]{3,}')])
+			}else{
+				this.register.get('referralOther')?.clearValidators()
+			}
+			return this.register.get('referralOther')?.updateValueAndValidity()
+			}
+		#endregion
+
+		#region ctor existMail
+			register!: FormGroup;
+			existUserEmail: string[] = []
+			constructor(private registerService: FormBuilder) {
+				this.existUserEmail = [
+				"aaa@aaa.com",
+				"bbb@bbb.com",
+				"ccc@ccc.com",
+				"ddd@ddd.com"
+				]
+				this.register = registerService.group(
+				{
+					fullName: ['', [Validators.required, Validators.pattern('[A-Za-z]{3,}')]],
+					email: ['', [Validators.required, this.existEmailValidator(this.existUserEmail)]],
+					phoneNumber: registerService.array(['']),
+					address: registerService.group({
+					city: [''],
+					postalCode: [''],
+					street: [''],
+					}),
+					password: [''],
+					confirmPassword: [''],
+					referral: [''],
+					referralOther: [
+					'',
+					[Validators.required, Validators.pattern('[A-Za-z]{3,}')]
+					],
+				}
+				)
+			}
+		#endregion
+
+		#region existMail
+			get email() {
+				return this.register.get('email')
+			}
+			existEmailValidator(existEmails: string[]): ValidatorFn {
+				return (control: AbstractControl): ValidationErrors | null => {
+				let emailValue: string = control.value
+				let validationError = {
+					"existEmail": {
+					"value": emailValue
+					}
+				}
+				if (control.untouched && emailValue.length == 0)
+					return null
+				let foundEmail = existEmails.includes(emailValue)
+				// return emailValue.includes('@')?null:validationError
+				return foundEmail ? validationError : null
+				}
+			}
+		#endregion
+
+		#region html existMail
+			<div class="mb-5">
+				<label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+				<input type="email" id="email" name="email" formControlName="email"
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					placeholder="Please Enter Your Email" required />
+					<div [hidden]="email?.valid || email?.untouched">
+						<div
+							class="flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800">
+		
+							<div class="ms-3 text-sm font-medium" *ngIf="email?.errors?.['required']">
+								Please Fill This Input
+							</div>
+							<!-- <div class="ms-3 text-sm font-medium" *ngIf="email?.errors?.['emailNotValid'] ">
+								Please Fill This Input at least 3 letters {{email?.errors?.['emailNotValid'].value }} not
+								matching
+							</div> -->
+							<div class="ms-3 text-sm font-medium" *ngIf="email?.errors?.['existEmail'] ">
+								Please Fill This Input at least 3 letters {{email?.errors?.['existEmail'].value }} not
+								matching
+							</div>
+						</div>
+					</div>
+			</div>
+		#endregion
+
+		#region matchPassword
+			import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+			export function passwordMatch(complexPassword:boolean=false):ValidatorFn{
+				return(control:AbstractControl):ValidationErrors|null=>{
+					let passwordControl=control.get('password')
+					let confirmPasswordControl=control.get('confirmPassword')
+					// if(!passwordControl || !confirmPasswordControl || !passwordControl.value || !confirmPasswordControl.value)
+					//     return null
+					let valueError={
+						unmatchedPassword:{
+							"password":passwordControl?.value,
+							"confirmPassword":confirmPasswordControl?.value
+						}
+					}
+					return passwordControl?.value==confirmPasswordControl?.value?null:valueError
+				}
+			}
+		#endregion
+
+		#region password ts
+			get password(){
+				return this.register.get('password')
+			}
+			get confirmPassword(){
+				return this.register.get('confirmPassword')
+			}
+
+			#region ctor
+				constructor(private registerService: FormBuilder) {
+					this.existUserEmail = [
+					"aaa@aaa.com",
+					"bbb@bbb.com",
+					"ccc@ccc.com",
+					"ddd@ddd.com"
+					]
+					this.register = registerService.group(
+					{
+						fullName: ['', [Validators.required, Validators.pattern('[A-Za-z]{3,}')]],
+						email: ['', [Validators.required, this.existEmailValidator(this.existUserEmail)]],
+						phoneNumber: registerService.array(['']),
+						address: registerService.group({
+						city: [''],
+						postalCode: [''],
+						street: [''],
+						}),
+						password: ['',[Validators.required, Validators.pattern('[A-Za-z]{3,}')]],
+						confirmPassword: ['',[Validators.required, Validators.pattern('[A-Za-z]{3,}')]],
+						referral: [''],
+						referralOther: [
+						'',
+						[Validators.required, Validators.pattern('[A-Za-z]{3,}')]
+						],
+					},
+					{
+						// Validators:[passwordMatch()]
+						validators:passwordMatch()
+					}
+					)
+
+				}
+			#endregion
+		#endregion
+
+		#region password html
+			<div class="mb-5">
+				<label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+				<input type="password" id="password" name="password" formControlName="password"
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					placeholder="Please Enter Your Password" required />
+				<div *ngIf="password?.invalid && register?.errors?.['unmatchedPassword']">
+
+					<div *ngIf="(password?.touched && confirmPassword?.touched) && (password?.invalid || !(register?.errors?.['unmatchedPassword']))"
+						class="flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800">
+
+						<div class="ms-3 text-sm font-medium"
+							*ngIf="password?.errors?.['required'] && password?.touched">
+							Please Fill This Input
+						</div>
+						<div class="ms-3 text-sm font-medium" *ngIf="register?.errors?.['unmatchedPassword'] ">
+							Please Fill This Input at least 3 letters not
+							matching
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="mb-5">
+				<label for="confirmPassword" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm
+					Password</label>
+				<input type="password" id="confirmPassword" name="confirmPassword" formControlName="confirmPassword"
+					class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					placeholder="Please Enter Your Password" required />
+					<div *ngIf="confirmPassword?.invalid && register?.errors?.['unmatchedPassword']">
+						<div *ngIf="(password?.touched && confirmPassword?.touched) && (confirmPassword?.invalid || !(register?.errors?.['unmatchedPassword']))"
+							class="flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800">
+			
+							<div class="ms-3 text-sm font-medium"
+								*ngIf="confirmPassword?.errors?.['required'] && confirmPassword?.touched">
+								Please Fill This Input
+							</div>
+							<div class="ms-3 text-sm font-medium" *ngIf="register?.errors?.['unmatchedPassword'] ">
+								Please Fill This Input at least 3 letters not
+								matching
+							</div>
+						</div>
+					</div>
+			</div>
+		#endregion
+	#endregion
+
+	#region full reactive form html
+		<form class="grid grid-cols-4" [formGroup]="register" (ngSubmit)="submit()">
+			<div class="grid col-span-1 mx-3">
+				<div class="mb-5">
+					<label for="fullName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Full Name</label>
+					<input type="text" id="fullName" name="fullName" formControlName="fullName"
+						[class.is-valid]="fullName?.valid"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						placeholder="Please Enter Your Full Name" required />
+					<div [hidden]="fullName?.valid || fullName?.untouched">
+						<div
+							class="flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800">
+
+							<div class="ms-3 text-sm font-medium" *ngIf="fullName?.errors?.['required']">
+								Please Fill This Input
+							</div>
+							<div class="ms-3 text-sm font-medium" *ngIf="fullName?.errors?.['pattern'] ">
+								Please Fill This Input at least 3 letters {{fullName?.errors?.['pattern'].actualValue }} not
+								matching
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="mb-5">
+					<label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+					<input type="email" id="email" name="email" formControlName="email"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						placeholder="Please Enter Your Email" required />
+					<div [hidden]="email?.valid || email?.untouched">
+						<div
+							class="flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800">
+
+							<div class="ms-3 text-sm font-medium" *ngIf="email?.errors?.['required']">
+								Please Fill This Input
+							</div>
+							<!-- <div class="ms-3 text-sm font-medium" *ngIf="email?.errors?.['emailNotValid'] ">
+									Please Fill This Input at least 3 letters {{email?.errors?.['emailNotValid'].value }} not
+									matching
+								</div> -->
+							<div class="ms-3 text-sm font-medium" *ngIf="email?.errors?.['existEmail'] ">
+								Please Fill This Input at least 3 letters {{email?.errors?.['existEmail'].value }} not
+								matching
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="mb-5" formGroupName="address">
+					<div>
+						<label for="city" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>
+						<input type="text" id="city" name="city" formControlName="city"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							placeholder="Please Enter Your city" required />
+					</div>
+					<div>
+						<label for="postalCode" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Postal
+							Code</label>
+						<input type="text" id="postalCode" name="postalCode" formControlName="postalCode"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							placeholder="Please Enter Your Postal Code" required />
+					</div>
+					<div>
+						<label for="street" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Street</label>
+						<input type="text" id="street" name="street" formControlName="street"
+							class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+							placeholder="Please Enter Your Street" required />
+					</div>
+				</div>
+
+				<div class="flex justify-center my-3">
+					<div class="flex items-center me-4">
+						<input id="referral1" type="radio" value="socialMedia" name="referral" formControlName="referral"
+							class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+							(change)="updateReferralValidator">
+						<label for="red-radio" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Social
+							Media</label>
+					</div>
+					<div class="flex items-center me-4">
+						<input id="referral2" type="radio" value="friend" name="referral" formControlName="referral"
+							class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+							(change)="updateReferralValidator">
+						<label for="green-radio"
+							class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Friend</label>
+					</div>
+					<div class="flex items-center me-4">
+						<input checked id="referral3" type="radio" value="referralOther" name="referral"
+							formControlName="referral"
+							class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+							(change)="updateReferralValidator">
+						<label for="purple-radio"
+							class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">referralOther</label>
+					</div>
+				</div>
+
+				<div class="mb-5" *ngIf="referral?.value=='referralOther'">
+					<label for="referralOther"
+						class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">referralOther</label>
+					<input type="text" id="referralOther" name="referralOther" formControlName="referralOther"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						placeholder="Please Enter Your Email" required />
+				</div>
+
+				<button (click)="fillForm()"
+					class="mx-2 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+					auto fill form
+				</button>
+			</div>
+			<div class="grid col-span-1 mx-3 ">
+				<div formArrayName="phoneNumber" class="mb-5" *ngFor="let phoneNumber of phoneNumbers.controls;let i=index">
+					<label for="{{'phoneNumber'+i+1}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+						phone number # {{i+1}}
+					</label>
+
+					<input type="number" id="{{'phoneNumber'+i+1}}" name="{{'phoneNumbers'+i}}" [formControlName]="i"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						placeholder="Please Enter Your Phone Number" required />
+
+					<button (click)="addNumber($event)"
+						class="my-2 text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800">
+						+
+					</button>
+				</div>
+
+
+				<div class="mb-5">
+					<label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+					<input type="password" id="password" name="password" formControlName="password"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						placeholder="Please Enter Your Password" required />
+					<div *ngIf="password?.invalid && register?.errors?.['unmatchedPassword']">
+
+						<div *ngIf="(password?.touched && confirmPassword?.touched) && (password?.invalid || !(register?.errors?.['unmatchedPassword']))"
+							class="flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800">
+
+							<div class="ms-3 text-sm font-medium"
+								*ngIf="password?.errors?.['required'] && password?.touched">
+								Please Fill This Input
+							</div>
+							<div class="ms-3 text-sm font-medium" *ngIf="register?.errors?.['unmatchedPassword'] ">
+								Please Fill This Input at least 3 letters not
+								matching
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="mb-5">
+					<label for="confirmPassword" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm
+						Password</label>
+					<input type="password" id="confirmPassword" name="confirmPassword" formControlName="confirmPassword"
+						class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+						placeholder="Please Enter Your Password" required />
+						<div *ngIf="confirmPassword?.invalid && register?.errors?.['unmatchedPassword']">
+							<div *ngIf="(password?.touched && confirmPassword?.touched) && (confirmPassword?.invalid || !(register?.errors?.['unmatchedPassword']))"
+								class="flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800">
+				
+								<div class="ms-3 text-sm font-medium"
+									*ngIf="confirmPassword?.errors?.['required'] && confirmPassword?.touched">
+									Please Fill This Input
+								</div>
+								<div class="ms-3 text-sm font-medium" *ngIf="register?.errors?.['unmatchedPassword'] ">
+									Please Fill This Input at least 3 letters not
+									matching
+								</div>
+							</div>
+						</div>
+				</div>
+
+				<div class="flex items-start mb-5">
+					<div class="flex items-center h-5">
+						<input id="remember" type="checkbox" value=""
+							class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+							required />
+					</div>
+					<label for="remember" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
+				</div>
+
+
+
+				<button type="submit" [disabled]="register.invalid"
+					class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+					Submit
+				</button>
+			</div>
+			<div class="grid col-span-2 items-center mx-3">
+				<img src="https://picsum.photos/2000/1100" alt="" class="grid justify-center rounded-xl">
+			</div>
+		</form>
+
+		<div class="grid justify-center text-violet-500">
+			<div class="flex">
+
+				{{register.value | json}} |
+			</div>
+			<div class="grid text-amber-500">
+
+				<!-- {{register.get('fullName')?.errors | json}} -->
+				the error is {{fullName?.errors | json}}
+			</div>
+			<div class="grid text-red-500">
+				the error is {{register.get('referralOther')?.errors | json}}
+			</div>
+			<div class="grid text-cyan-500">
+				the error is {{register.get('email')?.errors | json}}
+			</div>
+		</div>
+	#endregion
+
+	#region full ts reactive form
+		export class RegisterComponent {
+		register!: FormGroup;
+		existUserEmail: string[] = []
+		constructor(private registerService: FormBuilder) {
+			this.existUserEmail = [
+			"aaa@aaa.com",
+			"bbb@bbb.com",
+			"ccc@ccc.com",
+			"ddd@ddd.com"
+			]
+			this.register = registerService.group(
+			{
+				fullName: ['', [Validators.required, Validators.pattern('[A-Za-z]{3,}')]],
+				email: ['', [Validators.required, this.existEmailValidator(this.existUserEmail)]],
+				phoneNumber: registerService.array(['']),
+				address: registerService.group({
+				city: [''],
+				postalCode: [''],
+				street: [''],
+				}),
+				password: ['',[Validators.required, Validators.pattern('[A-Za-z]{3,}')]],
+				confirmPassword: ['',[Validators.required, Validators.pattern('[A-Za-z]{3,}')]],
+				referral: [''],
+				referralOther: [
+				'',
+				[Validators.required, Validators.pattern('[A-Za-z]{3,}')]
+				],
+			},
+			{
+				// Validators:[passwordMatch()]
+				validators:passwordMatch()
+			}
+			)
+		}
+		get fullName() {
+			return this.register.get('fullName')
+		}
+		// this.register=new FormGroup(
+		//   {
+		//     fullName:new FormControl('',[Validators.required,Validators.pattern('[A-Za-z]{3}')]),
+		//     email:new FormControl(''),
+		//     phoneNumber:new FormControl(''),
+		//     address:new FormGroup({
+		//       city:new FormControl(''),
+		//       postalCode:new FormControl(''),
+		//       street:new FormControl('')
+		//     }),
+		//     password:new FormControl(''),
+		//     confirmPassword:new FormControl(''),
+
+		//   }
+		// )
+		get referral() {
+			return this.register.get('referral')
+		}
+		get updateReferralValidator() {
+			if (this.referral?.value == 'referralOther') {
+			this.register.get('referralOther')?.addValidators([Validators.required, Validators.pattern('[A-Za-z]{3,}')])
+			} else {
+			this.register.get('referralOther')?.clearValidators()
+			}
+			return this.register.get('referralOther')?.updateValueAndValidity()
+		}
+		fillForm() {
+			this.register.patchValue( //all value ,.patchValue some values
+			{
+				fullName: "iti",
+				email: "mostafamohamedtaha.udemy@gmail.com",
+				address: {
+				city: "cairo",
+				postalCode: "123123",
+				street: "nasr"
+				}
+			}
+			)
+		}
+		submit() {
+			let registerUser: IUser = this.register.value as IUser
+			console.log(registerUser)
+		}
+		get phoneNumbers() {
+			return this.register.get('phoneNumber') as FormArray
+		}
+		addNumber(event: any) {
+			this.phoneNumbers.controls.push(this.registerService.control(''));
+			event.target?.classList.add('hidden')
+		}
+
+		get email() {
+			return this.register.get('email')
+		}
+		existEmailValidator(existEmails: string[]): ValidatorFn {
+			return (control: AbstractControl): ValidationErrors | null => {
+			let emailValue: string = control.value
+			let validationError = {
+				"existEmail": {
+				"value": emailValue
+				}
+			}
+			if (control.untouched && emailValue.length == 0)
+				return null
+			let foundEmail = existEmails.includes(emailValue)
+			// return emailValue.includes('@')?null:validationError
+			return foundEmail ? validationError : null
+			}
+		}
+
+		get password(){
+			return this.register.get('password')
+		}
+		get confirmPassword(){
+			return this.register.get('confirmPassword')
+		}
+		}
+	#endregion
+
+	#region full passwordMatch
+		export function passwordMatch(complexPassword:boolean=false):ValidatorFn{
+			return(control:AbstractControl):ValidationErrors|null=>{
+				let passwordControl=control.get('password')
+				let confirmPasswordControl=control.get('confirmPassword')
+				// if(!passwordControl || !confirmPasswordControl || !passwordControl.value || !confirmPasswordControl.value)
+				//     return null
+				let valueError={
+					unmatchedPassword:{
+						"password":passwordControl?.value,
+						"confirmPassword":confirmPasswordControl?.value
+					}
+				}
+				return passwordControl?.value==confirmPasswordControl?.value?null:valueError
+			}
+		}
 	#endregion
 #endregion
 
