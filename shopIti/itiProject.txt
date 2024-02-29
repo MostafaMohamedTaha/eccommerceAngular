@@ -1758,9 +1758,38 @@
 #endregion
 
 #region lazy loading 16
+	#region make module
+		ng g m userModule | ng g c userProfile | ng g c editUserProfile
+		//at routing
+		//in app-routing
+		{
+		path: 'user',
+		loadChildren: () => import('src/app/components/user-module/user-module.module').then(m => m.UserModuleModule )
+		}
+	#endregion
 
+	#region user module 
+		const routes:Routes=[
+			{path:'',redirectTo:'/user/user',pathMatch:'full'},
+			{path:'user',component:UserProfileComponent,canActivate:[AuthGuard]},
+			{path:'edit',component:EditUserProfileComponent,canActivate:[AuthGuard]}
+		]
+
+
+		@NgModule({
+		declarations: [
+			UserProfileComponent,
+			EditUserProfileComponent
+		],
+		imports: [
+			CommonModule,
+			RouterModule.forChild(routes)
+		]
+		})
+		export class UserModuleModule { }
+	#endregion
 #endregion
 
 #region building localization 17
-
+	ng build --configuration=production
 #endregion
